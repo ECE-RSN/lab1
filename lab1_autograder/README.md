@@ -16,9 +16,11 @@
 
         bash script.sh <your workspace path>
 
-	Ex: bash script.sh /home/user/catkin_ws/
+	Ex:
 
-  Note:Workspace is the directory in which you have your src folder
+	`bash script.sh /home/user/catkin_ws/`
+
+**Note:Workspace is the directory in which you have your src folder**
 
 
 # Debugging
