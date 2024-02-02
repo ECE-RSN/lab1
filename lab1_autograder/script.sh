@@ -14,21 +14,8 @@ port=$(cat port_file.txt)
 
 for ((i=0;i<1;i++))
 do
-    
-
-    python3 cloner.py $i $1
-
-    cd eece5554/gnss || cd EECE5554/gnss
-
-    rm -rf build
-    rm -rf devel
-
-    catkin_make
-
-    source devel/setup.bash
-
-    
-    python3 $cur_dir/executer.py $i $port
+        
+    python3 $cur_dir/executer.py $1 $port
 
     cd $cur_dir
 
