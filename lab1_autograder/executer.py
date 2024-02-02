@@ -73,6 +73,8 @@ if __name__ == "__main__":
 
     assert("standalone_driver.launch" in os.listdir(package_dir+"launch/")), "No standalone_driver.launch file found in launch folder"
 
+
+    
     os.chdir(workspace_dir)
 
 
@@ -281,9 +283,9 @@ if __name__ == "__main__":
 
     os.system("clear")
 
+    print("\nYay! Your package structure is spot-on perfect. 🎉 Everything's in tip-top shape!\n")
 
-
-    print("Received output from student: \n\n")
+    print("Received output from student's driver: \n\n")
     print(DATA)
 
 
@@ -308,11 +310,13 @@ if __name__ == "__main__":
 
     print("header : ","GPS1_Frame")
 
-    print ("hdop: 1.0")
+    # print ("hdop: 1.0")
 
     print ("altitude: 0")
 
+    
 
+    print("\n Double-check the output values from your driver and see if they're twins with the correct ones!🌟\n")
 
     # print("\n\n\n")
     # print("TOTAL SCORE OBTAINED : ")
