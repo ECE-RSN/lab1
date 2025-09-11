@@ -166,11 +166,11 @@ if __name__ == "__main__":
             cumulative_penalty = cumulative_penalty + 0.2
             cumulative_comment = cumulative_comment + "Frame ID is incorrect. "
 
-        if (DATA.header.stamp.secs)!=time_:
+        if (DATA.header.stamp.sec)!=time_:
             cumulative_penalty = cumulative_penalty + 0.5
             cumulative_comment = cumulative_comment + "seconds conversion is incorrect. "
             
-        if DATA.header.stamp.nsecs!=0.23*10**9:
+        if DATA.header.stamp.nanosec!=0.23*10**9:
             cumulative_penalty = cumulative_penalty + 0.5
             cumulative_comment = cumulative_comment + "nano-second calculation is incorrect. "
 
@@ -327,4 +327,5 @@ if __name__ == "__main__":
 
     sys.exit(0)
     #return " Driver works ", cumulative_penalty
+
 
