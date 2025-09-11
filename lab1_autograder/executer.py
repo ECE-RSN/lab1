@@ -1,11 +1,15 @@
 import os
 import pandas as pd
 import time
-import rospy
+import rclpy
+from rclpy.node import Node
 import sys
 from datetime import datetime, timezone
 import subprocess
 
+class GPSEvaluator(Node):
+    def __init__(self):
+        super().__init__('evaluator')
 
 DATA = "BREAD"
 argv=sys.argv
@@ -27,7 +31,8 @@ def callback(data):
 
 
 if __name__ == "__main__":
-
+    rclpy.init(args=argv)
+    evaluator = GPSEvaluator()
     # workspace_dir = os.getcwd()
     workspace_dir = str(argv[1])
     print(workspace_dir)
@@ -45,7 +50,7 @@ if __name__ == "__main__":
     files = os.listdir(src_dir)
     print(files)
 
-    assert ( "gps_driver" not in files or "gps-driver" not in files )==True, "ROS Package naming is not correct"
+    assert ( "gps_driver" not in files or "gps-driver" not in files )==True, "ROS2 Package naming is not correct"
 
     if ("gps_driver" in files):
         package = "gps_driver"
@@ -79,14 +84,14 @@ if __name__ == "__main__":
 
 
 
-    os.system("catkin_make")
+    os.system("colcon build")
 
     # os.system("source "+workspace_dir+"devel/setup.bash")
-    command = "source " + workspace_dir + "devel/setup.bash"
+    command = "source " + workspace_dir + "install/setup.bash"
     subprocess.run(["bash", "-c", command])
 
 
-    os.system('screen -S ros_node -dm roslaunch "'+package+'" standalone_driver.launch port:="'+port+'"')
+    os.system('screen -S ros_node -dm ros2 launch "'+package+'" standalone_driver.launch port:="'+port+'"')
 
     print("Screen Running, your ROS node should start within 10 seconds.")
 
@@ -108,21 +113,16 @@ if __name__ == "__main__":
                     from LAB1.msg import Customgps
 
                 except :
-                    assert False, "unable to import Customgps.msg, have you sourced devel/setup.bash in the terminal?"
+                    assert False, "unable to import Customgps.msg, have you sourced install/setup.bash in the terminal?"
 
-
-    rospy.init_node('Evaluator', anonymous=True)
-
-
-
-    sub =rospy.Subscriber("/gps", Customgps, callback)    
+    sub = evaluator.create_subscription(Customgps, "/gps", callback, 10)
     cur_time = time.time()
 
     try :
         while "BREAD" in DATA and time.time()-cur_time<30:
-
-            time.sleep(0.5)
+            rclpy.spin_once(evaluator, timeout_sec=0.5)
             print("waiting for topic")
+            
             # print("callback_received :",callback_received)
             # print("Received",DATA)
             
@@ -269,14 +269,11 @@ if __name__ == "__main__":
 
     if msg_structure_ok==False:
         msg_structure_ok = False
-        cumulative_comment,cumulative_penalty = cumulative_comment +"ROS message structure is incorrect. ",cumulative_penalty + 1
+        cumulative_comment,cumulative_penalty = cumulative_comment +"ROS2 message structure is incorrect. ",cumulative_penalty + 1
 
     if callback_received:
                 print("callback received")
                 os.kill(os.getpid(), 2)
-
-
-    rospy.spin()
 
     os.system("screen -S ros_node -X quit")
 
@@ -330,3 +327,4 @@ if __name__ == "__main__":
 
     sys.exit(0)
     #return " Driver works ", cumulative_penalty
+
