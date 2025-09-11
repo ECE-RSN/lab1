@@ -2,10 +2,10 @@ import os
 import pandas as pd
 import time
 import sys
-import rospy
+import rclpy
+from rclpy.node import Node
 
-args = rospy.myargv(argv=sys.argv)
-
+args = sys.argv
 print(args)
 
 id = int(args[1])
@@ -69,4 +69,4 @@ except:
 # VERIFIED THAT LAB1 EXISTS
 
 
-#os.system('catkin_make')
+#os.system('colcon build')
