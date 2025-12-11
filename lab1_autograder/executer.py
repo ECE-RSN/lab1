@@ -84,10 +84,7 @@ if __name__ == "__main__":
         launch_file = "standalone_driver.launch"
     assert launch_file is not None, "Missing standalone_driver.launch.py or standalone_driver.launch"
 
-    # Build
-    os.chdir(workspace_dir)
-    print("\nBuilding packages...")
-    os.system("colcon build")
+    # Build moved to script.sh (with source install/setup.bash)
 
     # Launch node
     os.system('screen -S ros_node -dm bash -c "source ' + workspace_dir + 'install/setup.bash && ros2 launch ' + package + ' ' + launch_file + ' port:=' + port + '"')
@@ -166,8 +163,9 @@ if __name__ == "__main__":
         if abs(DATA.latitude - expected["lat"]) <= 0.00001:
             grades["lat_lon_decimal"]["details"].append(f"[OK] Latitude: {DATA.latitude:.8f}")
         else:
+            diff = abs(DATA.latitude - expected["lat"])
             grades["lat_lon_decimal"]["passed"] = False
-            grades["lat_lon_decimal"]["details"].append(f"[FAIL] Latitude: {DATA.latitude:.8f}")
+            grades["lat_lon_decimal"]["details"].append(f"[FAIL] Latitude: {DATA.latitude:.8f} (expected: {expected['lat']:.8f}, diff: {diff:.8f})")
     except:
         grades["lat_lon_decimal"]["passed"] = False
         grades["lat_lon_decimal"]["details"].append("[FAIL] latitude field missing")
@@ -176,8 +174,9 @@ if __name__ == "__main__":
         if abs(DATA.longitude - expected["lon"]) <= 0.00001:
             grades["lat_lon_decimal"]["details"].append(f"[OK] Longitude: {DATA.longitude:.8f}")
         else:
+            diff = abs(DATA.longitude - expected["lon"])
             grades["lat_lon_decimal"]["passed"] = False
-            grades["lat_lon_decimal"]["details"].append(f"[FAIL] Longitude: {DATA.longitude:.8f}")
+            grades["lat_lon_decimal"]["details"].append(f"[FAIL] Longitude: {DATA.longitude:.8f} (expected: {expected['lon']:.8f}, diff: {diff:.8f})")
     except:
         grades["lat_lon_decimal"]["passed"] = False
         grades["lat_lon_decimal"]["details"].append("[FAIL] longitude field missing")
@@ -187,8 +186,9 @@ if __name__ == "__main__":
         if abs(DATA.utm_easting - expected["easting"]) <= 1:
             grades["utm_conversion"]["details"].append(f"[OK] Easting: {DATA.utm_easting:.2f}")
         else:
+            diff = abs(DATA.utm_easting - expected["easting"])
             grades["utm_conversion"]["passed"] = False
-            grades["utm_conversion"]["details"].append(f"[FAIL] Easting: {DATA.utm_easting:.2f}")
+            grades["utm_conversion"]["details"].append(f"[FAIL] Easting: {DATA.utm_easting:.2f} (expected: {expected['easting']:.2f}, diff: {diff:.2f}m)")
     except:
         grades["utm_conversion"]["passed"] = False
         grades["utm_conversion"]["details"].append("[FAIL] utm_easting missing")
@@ -197,8 +197,9 @@ if __name__ == "__main__":
         if abs(DATA.utm_northing - expected["northing"]) <= 1:
             grades["utm_conversion"]["details"].append(f"[OK] Northing: {DATA.utm_northing:.2f}")
         else:
+            diff = abs(DATA.utm_northing - expected["northing"])
             grades["utm_conversion"]["passed"] = False
-            grades["utm_conversion"]["details"].append(f"[FAIL] Northing: {DATA.utm_northing:.2f}")
+            grades["utm_conversion"]["details"].append(f"[FAIL] Northing: {DATA.utm_northing:.2f} (expected: {expected['northing']:.2f}, diff: {diff:.2f}m)")
     except:
         grades["utm_conversion"]["passed"] = False
         grades["utm_conversion"]["details"].append("[FAIL] utm_northing missing")
@@ -208,7 +209,7 @@ if __name__ == "__main__":
             grades["utm_conversion"]["details"].append(f"[OK] Zone: {DATA.zone}")
         else:
             grades["utm_conversion"]["passed"] = False
-            grades["utm_conversion"]["details"].append(f"[FAIL] Zone: {DATA.zone}")
+            grades["utm_conversion"]["details"].append(f"[FAIL] Zone: {DATA.zone} (expected: {expected['zone']})")
     except:
         grades["utm_conversion"]["passed"] = False
         grades["utm_conversion"]["details"].append("[FAIL] zone missing")
@@ -218,7 +219,7 @@ if __name__ == "__main__":
             grades["utm_conversion"]["details"].append(f"[OK] Letter: {DATA.letter}")
         else:
             grades["utm_conversion"]["passed"] = False
-            grades["utm_conversion"]["details"].append(f"[FAIL] Letter: {DATA.letter}")
+            grades["utm_conversion"]["details"].append(f"[FAIL] Letter: {DATA.letter} (expected: {expected['letter']})")
     except:
         grades["utm_conversion"]["passed"] = False
         grades["utm_conversion"]["details"].append("[FAIL] letter missing")
@@ -228,8 +229,9 @@ if __name__ == "__main__":
         if DATA.header.stamp.sec == time_:
             grades["time_handling"]["details"].append(f"[OK] Epoch sec: {DATA.header.stamp.sec}")
         else:
+            diff = abs(DATA.header.stamp.sec - time_)
             grades["time_handling"]["passed"] = False
-            grades["time_handling"]["details"].append(f"[FAIL] Epoch sec: {DATA.header.stamp.sec}")
+            grades["time_handling"]["details"].append(f"[FAIL] Epoch sec: {DATA.header.stamp.sec} (expected: {time_}, diff: {diff}s)")
     except:
         grades["time_handling"]["passed"] = False
         grades["time_handling"]["details"].append("[FAIL] stamp.sec missing")
@@ -239,8 +241,9 @@ if __name__ == "__main__":
         if abs(DATA.header.stamp.nanosec - expected["nsec"]) <= nsec_tolerance:
             grades["time_handling"]["details"].append(f"[OK] Nanosec: {DATA.header.stamp.nanosec}")
         else:
+            diff = abs(DATA.header.stamp.nanosec - expected["nsec"])
             grades["time_handling"]["passed"] = False
-            grades["time_handling"]["details"].append(f"[FAIL] Nanosec: {DATA.header.stamp.nanosec}")
+            grades["time_handling"]["details"].append(f"[FAIL] Nanosec: {DATA.header.stamp.nanosec} (expected: {expected['nsec']}, diff: {diff}ns)")
     except:
         grades["time_handling"]["passed"] = False
         grades["time_handling"]["details"].append("[FAIL] stamp.nanosec missing")
@@ -251,7 +254,7 @@ if __name__ == "__main__":
             grades["message_structure"]["details"].append(f"[OK] Frame ID: {DATA.header.frame_id}")
         else:
             grades["message_structure"]["passed"] = False
-            grades["message_structure"]["details"].append(f"[FAIL] Frame ID: {DATA.header.frame_id}")
+            grades["message_structure"]["details"].append(f"[FAIL] Frame ID: {DATA.header.frame_id} (expected: GPS1_Frame)")
     except:
         grades["message_structure"]["passed"] = False
         grades["message_structure"]["details"].append("[FAIL] frame_id missing")
@@ -261,7 +264,7 @@ if __name__ == "__main__":
             grades["message_structure"]["details"].append(f"[OK] Altitude: {DATA.altitude}")
         else:
             grades["message_structure"]["passed"] = False
-            grades["message_structure"]["details"].append(f"[FAIL] Altitude: {DATA.altitude}")
+            grades["message_structure"]["details"].append(f"[FAIL] Altitude: {DATA.altitude} (expected: {expected['altitude']})")
     except:
         grades["message_structure"]["passed"] = False
         grades["message_structure"]["details"].append("[FAIL] altitude missing")

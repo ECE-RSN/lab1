@@ -13,6 +13,11 @@ sleep 3
 
 port=$(cat port_file.txt)
 
+# Build the workspace and source it
+cd $1
+colcon build
+source install/setup.bash
+
 for ((i=0;i<1;i++))
 do
     python3 $cur_dir/executer.py $1 $port
